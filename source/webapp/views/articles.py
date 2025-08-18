@@ -1,9 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.utils.http import urlencode
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from webapp.forms import ArticleForm, SearchForm
@@ -97,3 +99,15 @@ class DetailArticleView(DetailView):
         result = super().get_context_data(**kwargs)
         result['comments'] = self.object.comments.order_by('-created_at')
         return result
+
+
+class LikeArticleView(LoginRequiredMixin, View):
+
+    def get(self, request, pk, *args, **kwargs):
+        post = get_object_or_404(Article, pk=pk)
+        if request.user in post.like_users.all():
+            post.like_users.remove(request.user)
+        else:
+            post.like_users.add(request.user)
+            self.request.GET.get("next")
+        return HttpResponseRedirect(self.request.GET.get("next", reverse("webapp:index")))
