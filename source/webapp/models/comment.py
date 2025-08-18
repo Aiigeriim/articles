@@ -11,6 +11,7 @@ class Comment(BaseCreateUpdateModel):
     text = models.TextField(max_length=400, verbose_name='Комментарий')
     author = models.ForeignKey(get_user_model(), related_name='comments', on_delete=models.SET_DEFAULT, default=1,
                                verbose_name="Автор")
+    likes = models.ManyToManyField(get_user_model(), related_name='like_comment', verbose_name='Лайки')
 
     def __str__(self):
         return self.text[:20]

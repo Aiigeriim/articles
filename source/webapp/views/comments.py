@@ -1,5 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.defaulttags import comment
+from django.urls import reverse
+from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from webapp.forms.comments import CommentForm
@@ -36,3 +40,15 @@ class DeleteCommentView(DeleteView):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
+
+
+class LikeCommentView(LoginRequiredMixin, View):
+
+    def get(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        if request.user in comment.likes.all():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+            self.request.GET.get("next")
+        return HttpResponseRedirect(self.request.GET.get("next", reverse("webapp:article-detail", kwargs={"pk": comment.pk})))

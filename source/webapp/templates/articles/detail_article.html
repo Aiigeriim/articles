@@ -37,6 +37,19 @@
         {% for comment in comments %}
             <div class="card">
                 <p>{{ comment.text }}</p>
+
+
+                {% if request.user.is_authenticated %}
+            <a href="{% url 'webapp:like-comment' comment.pk %}?next={{ request.path }}">
+                {% if request.user not in comment.likes.all %}
+                    <span class="article-like-btn me-2"><i class="bi bi-heart"></i></span>
+                {% else %}
+                    <span class="article-like-btn me-2"><i class="bi bi-heart-fill"></i></span>
+                {% endif %}
+            </a>
+                     <span class="post-likes font-weight-bold">{{ comment.likes.count }}</span>
+        {% endif %}
+
                 <a href="{% url 'webapp:comment-update' comment.pk %}">Update</a>
                 <a href="{% url 'webapp:comment-delete' comment.pk %}">Delete</a>
             
