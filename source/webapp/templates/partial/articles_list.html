@@ -18,27 +18,23 @@
                            class="card-link btn btn-primary">Delete</a>
                     {% endif %}
 
-                {% if request.user not in article.like_users.all %}
-                <p class="testJs">start text</p>
-                    <a href="{% url 'webapp:like-test' article.pk %}" data-like="like_article" data-article-id="{{ article.id }}">like</a>
-                {% else %}
-                <a href="{% url 'webapp:like-test' article.pk %}" data-like="like_article" data-article-id="{{ article.id }}">unlike</a>
-                {% endif %}
-                <span class="post-likes font-weight-bold">{{ article.like_users.count }}</span>
+
+                {% if user.is_authenticated %}
+          <a href="{% url 'webapp:like-test' article.id %}"
+             data-like="like_article"
+             data-article-id="{{ article.id }}">
+             {% if user in article.like_users.all %}
+                 Unlike
+             {% else %}
+                 Like
+             {% endif %}
+          </a>
+          <span id="likes-count-{{ article.id }}">{{ article.like_users.count }}</span>
+      {% endif %}
 
 
 
-{#                 {% if request.user.is_authenticated %}#}
 
-{#            <a href="{% url 'webapp:like-article' article.pk %}?next={{ request.path }}">#}
-{#                {% if request.user not in article.like_users.all %}#}
-{#                    <span class="article-like-btn me-2"><i class="bi bi-heart"></i></span>#}
-{#                {% else %}#}
-{#                    <span class="article-like-btn me-2"><i class="bi bi-heart-fill"></i></span>#}
-{#                {% endif %}#}
-{#            </a>#}
-{#                     <span class="post-likes font-weight-bold">{{ article.like_users.count }}</span>#}
-{#        {% endif %}#}
 
 
                 </div>

@@ -116,11 +116,18 @@ class LikeArticleView(LoginRequiredMixin, View):
 
 class JsTestView(View):
     def get(self, request, *args, pk, **kwargs):
+
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "Unauthorized"}, status=401)
         article = get_object_or_404(Article, pk=pk)
-        print(pk)
         if request.user in article.like_users.all():
             article.like_users.remove(request.user)
+            action = "unliked"
         else:
             article.like_users.add(request.user)
-            self.request.GET.get("next")
-        return JsonResponse({"test": "test", "test_list": ['111', '222']})
+            action = "liked"
+
+        return JsonResponse({
+            "likes_count": article.like_users.count(),
+            "action": action
+        })

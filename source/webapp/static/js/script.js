@@ -1,27 +1,26 @@
 async function makeRequest(url, method='GET'){
-    let response = await fetch(url, {"method": method})
+    let response = await fetch(url, { method: method });
     if (response.ok){
         return await response.json();
-    }
-    else{
-        let error = await response.json()
-        throw new Error(error.message)
+    } else {
+        let error = await response.json();
+        throw new Error(error.message);
     }
 }
-
 
 async function onClick(event){
     event.preventDefault();
     let a = event.target;
     let url = a.href;
     let response = await makeRequest(url);
-    let articleId = a.dataset['articleId']
-    let idUrl = `/article/${articleId}/test/`
-    let countId = await makeRequest(idUrl)
-    console.log(countId)
 
-    let p = a.parentElement.getElementsByClassName("testJs")[0];
-    p.innerHTML = response.test;
+    // Обновляем текст кнопки
+    a.textContent = response.action === "liked" ? "Unlike" : "Like";
+
+    // Обновляем счётчик
+    let articleId = a.dataset.articleId;
+    let counter = document.getElementById(`likes-count-${articleId}`);
+    counter.textContent = response.like_users.count;
 }
 
 function onLoad(){
@@ -31,8 +30,4 @@ function onLoad(){
     }
 }
 
-window.addEventListener("load", onLoad)
-
-
-
-
+window.addEventListener("load", onLoad);

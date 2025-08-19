@@ -28,18 +28,20 @@
         <p>Дата создания - {{ article.created_at }} </p>
         <p>Статус - {{ article.get_status_display }} </p>
 
-          {% if request.user.is_authenticated %}
-            <a href="{% url 'webapp:like-article' article.pk %}?next={{ request.path }}">
-                {% if request.user not in article.like_users.all %}
-                    <span class="article-like-btn me-2"><i class="bi bi-heart"></i></span>
-                {% else %}
-                    <span class="article-like-btn me-2"><i class="bi bi-heart-fill"></i></span>
-                {% endif %}
-            </a>
-                     <span class="post-likes font-weight-bold">{{ article.like_users.count }}</span>
-        {% endif %}
 
-        <a href="{% url 'webapp:like-test' article.pk %}" data-like="like_article">like art</a>
+
+       {% if user.is_authenticated %}
+          <a href="{% url 'webapp:like-test' article.id %}"
+             data-like="like_article"
+             data-article-id="{{ article.id }}">
+             {% if user in article.like_users.all %}
+                 Unlike
+             {% else %}
+                 Like
+             {% endif %}
+          </a>
+          <span id="likes-count-{{ article.id }}">{{ article.like_users.count }}</span>
+      {% endif %}
 
 
         <hr/>
@@ -64,6 +66,20 @@
             </a>
                      <span class="post-likes font-weight-bold">{{ comment.likes.count }}</span>
         {% endif %}
+
+
+            {% if user.is_authenticated %}
+          <a href="{% url 'webapp:like-test' article.id %}"
+             data-like="like_article"
+             data-article-id="{{ article.id }}">
+             {% if user in article.like_users.all %}
+                 Unlike
+             {% else %}
+                 Like
+             {% endif %}
+          </a>
+          <span id="likes-count-{{ article.id }}">{{ article.like_users.count }}</span>
+      {% endif %}
 
                 <a href="{% url 'webapp:comment-update' comment.pk %}">Update</a>
                 <a href="{% url 'webapp:comment-delete' comment.pk %}">Delete</a>
