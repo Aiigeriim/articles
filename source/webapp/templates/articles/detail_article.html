@@ -27,6 +27,21 @@
         <p>Автор - {{ article.author }}</p>
         <p>Дата создания - {{ article.created_at }} </p>
         <p>Статус - {{ article.get_status_display }} </p>
+
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'webapp:like-article' article.pk %}?next={{ request.path }}">
+                {% if request.user not in article.like_users.all %}
+                    <span class="article-like-btn me-2"><i class="bi bi-heart"></i></span>
+                {% else %}
+                    <span class="article-like-btn me-2"><i class="bi bi-heart-fill"></i></span>
+                {% endif %}
+            </a>
+                     <span class="post-likes font-weight-bold">{{ article.like_users.count }}</span>
+        {% endif %}
+
+        <a href="{% url 'webapp:like-test' article.pk %}" data-like="like_article">like art</a>
+
+
         <hr/>
         <h5>Tags</h5>
         {% for tag in article.tags.all %}

@@ -3,6 +3,7 @@ from django.urls import path
 from webapp.views import UpdateArticleView, DeleteArticleView, ArticleListView, CreateArticleView, DetailArticleView, LikeArticleView
 from webapp.views.comments import CreateCommentView, UpdateCommentView, DeleteCommentView
 
+from source.webapp.views.articles import JsTestView
 from source.webapp.views.comments import LikeCommentView
 
 app_name = 'webapp'
@@ -20,4 +21,6 @@ urlpatterns = [
     path('comment/<int:pk>/delete/', DeleteCommentView.as_view(), name='comment-delete'),
     path('article/<int:pk>/like/', LikeArticleView.as_view(), name='like-article'),
     path('comment/<int:pk>/like/', LikeCommentView.as_view(), name='like-comment'),
+    path('article/<int:pk>/test/', JsTestView.as_view(), name='like-test'),
+
 ]

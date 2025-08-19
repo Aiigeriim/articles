@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.http import urlencode
@@ -102,12 +102,25 @@ class DetailArticleView(DetailView):
 
 
 class LikeArticleView(LoginRequiredMixin, View):
+    pass
 
-    def get(self, request, pk, *args, **kwargs):
-        post = get_object_or_404(Article, pk=pk)
-        if request.user in post.like_users.all():
-            post.like_users.remove(request.user)
+    # def get(self, request, pk, *args, **kwargs):
+    #     article = get_object_or_404(Article, pk=pk)
+    #     if request.user in article.like_users.all():
+    #         article.like_users.remove(request.user)
+    #     else:
+    #         article.like_users.add(request.user)
+    #         self.request.GET.get("next")
+    #     return HttpResponseRedirect(self.request.GET.get("next", reverse("webapp:index")))
+
+
+class JsTestView(View):
+    def get(self, request, *args, pk, **kwargs):
+        article = get_object_or_404(Article, pk=pk)
+        print(pk)
+        if request.user in article.like_users.all():
+            article.like_users.remove(request.user)
         else:
-            post.like_users.add(request.user)
+            article.like_users.add(request.user)
             self.request.GET.get("next")
-        return HttpResponseRedirect(self.request.GET.get("next", reverse("webapp:index")))
+        return JsonResponse({"test": "test", "test_list": ['111', '222']})
