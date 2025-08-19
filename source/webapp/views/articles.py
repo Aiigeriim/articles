@@ -101,20 +101,7 @@ class DetailArticleView(DetailView):
         return result
 
 
-class LikeArticleView(LoginRequiredMixin, View):
-    pass
-
-    # def get(self, request, pk, *args, **kwargs):
-    #     article = get_object_or_404(Article, pk=pk)
-    #     if request.user in article.like_users.all():
-    #         article.like_users.remove(request.user)
-    #     else:
-    #         article.like_users.add(request.user)
-    #         self.request.GET.get("next")
-    #     return HttpResponseRedirect(self.request.GET.get("next", reverse("webapp:index")))
-
-
-class JsTestView(View):
+class LikeArticleView(View):
     def get(self, request, *args, pk, **kwargs):
 
         if not request.user.is_authenticated:

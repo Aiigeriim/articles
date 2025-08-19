@@ -56,29 +56,17 @@
                 <p>{{ comment.text }}</p>
 
 
-                {% if request.user.is_authenticated %}
-            <a href="{% url 'webapp:like-comment' comment.pk %}?next={{ request.path }}">
-                {% if request.user not in comment.likes.all %}
-                    <span class="article-like-btn me-2"><i class="bi bi-heart"></i></span>
-                {% else %}
-                    <span class="article-like-btn me-2"><i class="bi bi-heart-fill"></i></span>
-                {% endif %}
-            </a>
-                     <span class="post-likes font-weight-bold">{{ comment.likes.count }}</span>
-        {% endif %}
-
-
             {% if user.is_authenticated %}
-          <a href="{% url 'webapp:like-test' article.id %}"
-             data-like="like_article"
-             data-article-id="{{ article.id }}">
-             {% if user in article.like_users.all %}
+          <a href="{% url 'webapp:like_comment' comment.id %}"
+             data-like="like_comment"
+             data-comment-id="{{ comment.id }}">
+             {% if user in comment.likes.all %}
                  Unlike
              {% else %}
                  Like
              {% endif %}
           </a>
-          <span id="likes-count-{{ article.id }}">{{ article.like_users.count }}</span>
+          <span id="comment-likes-count-{{ comment.id }}">{{ comment.likes.count }}</span>
       {% endif %}
 
                 <a href="{% url 'webapp:comment-update' comment.pk %}">Update</a>

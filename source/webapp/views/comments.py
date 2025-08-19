@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.defaulttags import comment
 from django.urls import reverse
@@ -42,13 +42,22 @@ class DeleteCommentView(DeleteView):
         return self.object.get_absolute_url()
 
 
-class LikeCommentView(LoginRequiredMixin, View):
-
+class LikeCommentView(View):
     def get(self, request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "Unauthorized"}, status=401)
+
         comment = get_object_or_404(Comment, pk=pk)
+
         if request.user in comment.likes.all():
             comment.likes.remove(request.user)
+            action = "unliked"
         else:
             comment.likes.add(request.user)
-            self.request.GET.get("next")
-        return HttpResponseRedirect(self.request.GET.get("next", reverse("webapp:article-detail", kwargs={"pk": comment.pk})))
+            action = "liked"
+
+        return JsonResponse({
+            "likes_count": comment.likes.count(),
+            "action": action
+        })
+

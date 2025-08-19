@@ -3,31 +3,38 @@ async function makeRequest(url, method='GET'){
     if (response.ok){
         return await response.json();
     } else {
-        let error = await response.json();
-        throw new Error(error.message);
+        throw new Error("Ошибка: " + response.status);
     }
 }
 
 async function onClick(event){
     event.preventDefault();
-    let a = event.target;
+    let a = event.currentTarget;
     let url = a.href;
     let response = await makeRequest(url);
 
-    // Обновляем текст кнопки
-    a.textContent = response.action === "liked" ? "Unlike" : "Like";
+    if (response.action === "liked") {
+    a.textContent = "Unlike";
+    } else {
+    a.textContent = "Like";
+    }
 
-    // Обновляем счётчик
-    let articleId = a.dataset.articleId;
-    let counter = document.getElementById(`likes-count-${articleId}`);
-    counter.textContent = response.like_users.count;
+    if (a.dataset.articleId){
+        let counter = document.getElementById(`likes-count-${a.dataset.articleId}`);
+        counter.textContent = response.likes_count;
+    }
+    if (a.dataset.commentId){
+        let counter = document.getElementById(`comment-likes-count-${a.dataset.commentId}`);
+        counter.textContent = response.likes_count;
+    }
 }
 
 function onLoad(){
-    let links = document.querySelectorAll('[data-like="like_article"]');
+    let links = document.querySelectorAll('[data-like]');
     for (let link of links){
         link.addEventListener('click', onClick);
     }
 }
 
 window.addEventListener("load", onLoad);
+
