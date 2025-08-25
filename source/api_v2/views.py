@@ -3,6 +3,7 @@ from json import JSONDecodeError
 
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse, HttpResponseBadRequest
+from django.template.defaulttags import comment
 
 from django.views import View
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -73,17 +74,19 @@ class CommentView(APIView):
             serializer = CommentSerializer(comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, pk=None, **kwargs):
-        article = get_object_or_404(Article, pk=pk)
+    def post(self, request, *args, article_pk=None, **kwargs):
+        article = get_object_or_404(Article, pk=article_pk)
         serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        # user = get_user_model().objects.last()
+        comment = serializer.save(article=article)
+        return Response({'text': comment.text}, status=status.HTTP_201_CREATED)
 
-        serializer = ArticleSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = get_user_model().objects.last()
-        article = serializer.save(author=user)
-        return Response({'id': article.id}, status=status.HTTP_201_CREATED)
-
+        # serializer = ArticleSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # user = get_user_model().objects.last()
+        # article = serializer.save(author=user)
+        # return Response({'id': article.id}, status=status.HTTP_201_CREATED)
 
         # if pk:
         #     article = get_object_or_404(Article, pk=pk)
