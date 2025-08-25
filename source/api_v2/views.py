@@ -11,8 +11,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from webapp.models.article import Article
-
 from api_v2.serialisers import ArticleSerializer
+from webapp.models.comment import Comment
+from api_v2.serialisers.comments import CommentSerializer
 
 
 @ensure_csrf_cookie
@@ -57,6 +58,25 @@ class ArticleView(APIView):
         serializer = ArticleSerializer(article)
         Article.objects.filter(id=article.id).delete()
         return Response('deleted', status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentView(APIView):
+    def get(self, request, *args, pk=None, **kwargs):
+        article = get_object_or_404(Article, pk=pk)
+        comments = Comment.objects.filter(article=article)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+
+        # if pk:
+        #     article = get_object_or_404(Article, pk=pk)
+        #     comment = Comment.objects.create(article=article)
+        #     serializer = ArticleSerializer(article)
+        #     return Response(serializer.data)
+        # else:
+        #     articles = Article.objects.all()
+        #     serializer = ArticleSerializer(articles, many=True)
+        #     return Response(serializer.data)
 
 
 # class ArticleView(View):

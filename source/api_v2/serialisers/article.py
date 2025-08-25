@@ -1,7 +1,5 @@
 from rest_framework import serializers
-
-# from webapp.models.article import statuses
-from webapp.models import Tag, Article
+from webapp.models import Article
 
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:

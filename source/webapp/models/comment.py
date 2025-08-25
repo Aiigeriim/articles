@@ -4,7 +4,6 @@ from django.urls import reverse
 
 from webapp.models.base_create_update import BaseCreateUpdateModel
 
-
 class Comment(BaseCreateUpdateModel):
     article = models.ForeignKey('webapp.Article', related_name='comments', on_delete=models.CASCADE,
                                 verbose_name='Статья')
