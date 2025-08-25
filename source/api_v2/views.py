@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse, Http
 
 from django.views import View
 from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,17 +23,23 @@ def get_token_view(request, *args, **kwargs):
 
 
 class ArticleView(APIView):
-    def get(self, request, *args, **kwargs):
-        articles = Article.objects.all()
-        serializer = ArticleSerializer(articles, many=True)
-        return Response(serializer.data)
+    def get(self, request, *args, pk=None, **kwargs):
+        if pk:
+            article = get_object_or_404(Article, pk=pk)
+            serializer = ArticleSerializer(article)
+            return Response(serializer.data)
+        else:
+            articles = Article.objects.all()
+            serializer = ArticleSerializer(articles, many=True)
+            return Response(serializer.data)
+
 
     def post(self, request, *args, **kwargs):
         serializer = ArticleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = get_user_model().objects.last()
         article = serializer.save(author=user)
-        return Response({'id': article.id}, status=201)
+        return Response({'id': article.id}, status=status.HTTP_201_CREATED)
 
 
     def put(self, request, *args, pk, **kwargs):
@@ -40,10 +47,16 @@ class ArticleView(APIView):
         serializer = ArticleSerializer(data=request.data, instance=article)
         if serializer.is_valid():
             article = serializer.save()
-            return Response(serializer.data, status=200)
+            return Response(serializer.data)
         else:
-            return Response({'errors': serializer.errors}, status=400)
-#
+            return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, *args, pk=None, **kwargs):
+        article = get_object_or_404(Article, pk=pk)
+        serializer = ArticleSerializer(article)
+        Article.objects.filter(id=article.id).delete()
+        return Response('deleted', status=status.HTTP_204_NO_CONTENT)
 
 
 # class ArticleView(View):
