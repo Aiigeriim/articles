@@ -5,7 +5,7 @@ from webapp.models.comment import Comment
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author', 'created_at', 'updated_at']
+        fields = ['id', 'text', 'author', 'article_id', 'created_at', 'updated_at']
         read_only_fields = ['id', 'author', 'created_at', 'updated_at']
 
     # def validate_text(self, value):

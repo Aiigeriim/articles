@@ -78,15 +78,15 @@ class CommentView(APIView):
         article = get_object_or_404(Article, pk=article_pk)
         serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # user = get_user_model().objects.last()
         comment = serializer.save(article=article)
-        return Response({'text': comment.text}, status=status.HTTP_201_CREATED)
-
-        # serializer = ArticleSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # user = get_user_model().objects.last()
-        # article = serializer.save(author=user)
-        # return Response({'id': article.id}, status=status.HTTP_201_CREATED)
+        return Response({
+            'id': comment.id,
+            'text': comment.text,
+            'author': comment.author.username,
+            'article_id': comment.article_id,
+            'created_at': comment.created_at,
+            'updated_at': comment.updated_at,},
+            status=status.HTTP_201_CREATED)
 
         # if pk:
         #     article = get_object_or_404(Article, pk=pk)
