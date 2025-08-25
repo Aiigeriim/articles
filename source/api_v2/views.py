@@ -28,11 +28,11 @@ class ArticleView(APIView):
         if pk:
             article = get_object_or_404(Article, pk=pk)
             serializer = ArticleSerializer(article)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             articles = Article.objects.all()
             serializer = ArticleSerializer(articles, many=True)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def post(self, request, *args, **kwargs):
@@ -61,11 +61,28 @@ class ArticleView(APIView):
 
 
 class CommentView(APIView):
-    def get(self, request, *args, pk=None, **kwargs):
+    def get(self, request, *args, article_pk=None, comment_pk=None, **kwargs):
+        if not comment_pk:
+            article = get_object_or_404(Article, pk=article_pk)
+            comments = Comment.objects.filter(article=article)
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            article = get_object_or_404(Article, pk=article_pk)
+            comment = get_object_or_404(Comment, pk=comment_pk, article=article)
+            serializer = CommentSerializer(comment)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, pk=None, **kwargs):
         article = get_object_or_404(Article, pk=pk)
-        comments = Comment.objects.filter(article=article)
-        serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer = ArticleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = get_user_model().objects.last()
+        article = serializer.save(author=user)
+        return Response({'id': article.id}, status=status.HTTP_201_CREATED)
 
 
         # if pk:
