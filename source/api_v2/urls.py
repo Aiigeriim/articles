@@ -11,6 +11,6 @@ urlpatterns = [
     path('articles/<int:pk>/', ArticleView.as_view(), name='article'),
     path('get-csrf/', get_token_view, name='get-csrf'),
 
-    path('comments/<int:pk>/', CommentView.as_view(), name='articles'),
+    path('<int:pk>/comments/', CommentView.as_view(), name='articles'),
     # path('articles/<int:pk>/', ArticleView.as_view(), name='article'),
 ]
