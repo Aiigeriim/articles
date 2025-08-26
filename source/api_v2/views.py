@@ -1,11 +1,5 @@
-import json
-from json import JSONDecodeError
-
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse, HttpResponseBadRequest
-from django.template.defaulttags import comment
-
-from django.views import View
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
@@ -104,42 +98,4 @@ class CommentView(APIView):
         return Response('deleted', status=status.HTTP_204_NO_CONTENT)
 
 
-
-        # if pk:
-        #     article = get_object_or_404(Article, pk=pk)
-        #     comment = Comment.objects.create(article=article)
-        #     serializer = ArticleSerializer(article)
-        #     return Response(serializer.data)
-        # else:
-        #     articles = Article.objects.all()
-        #     serializer = ArticleSerializer(articles, many=True)
-        #     return Response(serializer.data)
-
-
-# class ArticleView(View):
-#     def get(self, request, *args, **kwargs):
-#         articles = Article.objects.all()
-#         serializer = ArticleSerializer(articles, many=True)
-#         return JsonResponse(serializer.data, safe=False)
-#
-#     def post(self, request, *args, **kwargs):
-#         body = json.loads(request.body)
-#         serializer = ArticleSerializer(data=body)
-#         if serializer.is_valid():
-#             # user = request.user
-#             user = get_user_model().objects.last()
-#             article = serializer.save(author=user)
-#             return JsonResponse({'id': article.id}, status=201)
-#         else:
-#             return JsonResponse({'error': serializer.errors}, status=400)
-#
-#     def put(self, request, *args, pk, **kwargs):
-#         article = get_object_or_404(Article, pk=pk)
-#         body = json.loads(request.body)
-#         serializer = ArticleSerializer(data=body, instance=article)
-#         if serializer.is_valid():
-#             article = serializer.save()
-#             return JsonResponse(serializer.data, status=200)
-#         else:
-#             return JsonResponse({'error': serializer.errors}, status=400)
 
