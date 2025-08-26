@@ -97,20 +97,13 @@ class CommentView(APIView):
         return Response(serializer.data)
 
 
-
-        # article = get_object_or_404(Article, pk=pk)
-        # serializer = ArticleSerializer(data=request.data, instance=article)
-        # if serializer.is_valid():
-        #     article = serializer.save()
-        #     return Response(serializer.data)
-        # else:
-        #     return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, *args, pk=None, **kwargs):
-        article = get_object_or_404(Article, pk=pk)
-        serializer = ArticleSerializer(article)
-        Article.objects.filter(id=article.id).delete()
+    def delete(self, request, *args, article_pk=None, comment_pk=None, **kwargs):
+        article = get_object_or_404(Article, pk=article_pk)
+        comment = get_object_or_404(Comment, pk=comment_pk, article=article)
+        Comment.objects.filter(id=comment.id).delete()
         return Response('deleted', status=status.HTTP_204_NO_CONTENT)
+
+
 
         # if pk:
         #     article = get_object_or_404(Article, pk=pk)
